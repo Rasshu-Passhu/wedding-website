@@ -922,6 +922,22 @@ section {
     width: auto;
 }
 
+/* Additional fallback for mobile devices */
+@media (min-width: 320px) {
+    .side-selection {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 1rem !important;
+    }
+    
+    .side-selection .radio-option {
+        flex: 1 !important;
+        width: calc(50% - 0.5rem) !important;
+        text-align: center !important;
+        justify-content: center !important;
+    }
+}
+
 .radio-option {
     display: flex;
     align-items: center;
