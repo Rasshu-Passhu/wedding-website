@@ -907,16 +907,19 @@ section {
     gap: 1rem;
 }
 
-/* Side by side layout for side selection */
-.radio-group.side-selection {
-    flex-direction: row;
+/* Side by side layout for side selection - enhanced specificity */
+.rsvp-form .radio-group.side-selection {
+    flex-direction: row !important;
     gap: 1rem;
+    width: 100%;
 }
 
-.radio-group.side-selection .radio-option {
+.rsvp-form .radio-group.side-selection .radio-option {
     flex: 1;
     text-align: center;
     justify-content: center;
+    max-width: none;
+    width: auto;
 }
 
 .radio-option {
