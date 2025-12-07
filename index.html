@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rashmi & Yash - Wedding</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Great+Vibes&family=Playfair+Display:wght@400;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="couple-initials">Rashmi & Yash</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#home" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#about" class="nav-link">Our Story</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#details" class="nav-link">Details</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#gallery" class="nav-link">Gallery</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#rsvp" class="nav-link">RSVP</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#photos" class="nav-link">Share Photos</a>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Music Player -->
+    <div class="music-player">
+        <button class="music-toggle" id="musicToggle">
+            <i class="fas fa-play" id="playIcon"></i>
+            <i class="fas fa-pause" id="pauseIcon" style="display: none;"></i>
+        </button>
+        <audio id="backgroundMusic" loop>
+            <source src="https://www.soundjay.com/misc/sounds/beep-07a.wav" type="audio/wav">
+            <source src="music/wedding-song.mp3" type="audio/mpeg">
+            <source src="music/wedding-song.wav" type="audio/wav">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="couple-names">Rashmi & Yash</h1>
+                <p class="wedding-date">February 7, 2026</p>
+                <p class="wedding-location">The Grand Rudraksh, Amravati</p>
+                <div class="countdown" id="countdown">
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="days">00</span>
+                        <span class="countdown-label">Days</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="hours">00</span>
+                        <span class="countdown-label">Hours</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="minutes">00</span>
+                        <span class="countdown-label">Minutes</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="seconds">00</span>
+                        <span class="countdown-label">Seconds</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-bg"></div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Our Love Story</h2>
+                <p class="section-subtitle">How it all began</p>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <div class="story-card">
+                        <div class="story-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <h3>How We Met</h3>
+                        <p>We first met at a coffee shop in downtown Seattle in 2020. What started as a chance encounter over a shared love for artisan coffee quickly blossomed into something beautiful.</p>
+                    </div>
+                    <div class="story-card">
+                        <div class="story-icon">
+                            <i class="far fa-gem"></i>
+                        </div>
+                        <h3>The Proposal</h3>
+                        <p>On a romantic evening walk along the waterfront in 2024, Yash surprised Rashmi with a heartfelt proposal under the stars. Of course, she said yes!</p>
+                    </div>
+                    <div class="story-card">
+                        <div class="story-icon">
+                            <i class="fas fa-scroll"></i>
+                        </div>
+                        <h3>Our Future</h3>
+                        <p>Now we're excited to celebrate our love with all of our family and friends as we begin this new chapter of our lives together.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Wedding Details Section -->
+    <section id="details" class="details">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Wedding Details</h2>
+                <p class="section-subtitle">Join us on our special day</p>
+                <div class="venue-info">
+                    <h3><i class="fas fa-map-marker-alt"></i> The Grand Rudraksh, Amravati, Maharashtra</h3>
+                    <a href="https://maps.app.goo.gl/seLQmi8BeWgv5EFY6" target="_blank" class="btn btn-outline">View on Map</a>
+                </div>
+                <div class="calendar-section">
+                    <button class="btn btn-calendar-all" onclick="addAllEventsToCalendar()">
+                        <i class="far fa-calendar-plus"></i> Add All Events to Calendar
+                    </button>
+                    <p class="calendar-description">Get all 4 events with automatic countdown reminders</p>
+                </div>
+            </div>
+            <div class="details-content">
+                <div class="detail-card">
+                    <div class="detail-icon">
+                        <i class="fas fa-sun"></i>
+                    </div>
+                    <h3>Haldi Ceremony</h3>
+                    <p><strong>Date:</strong> February 6, 2026</p>
+                    <p><strong>Time:</strong> 10:00 AM</p>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-icon">
+                        <i class="fas fa-music"></i>
+                    </div>
+                    <h3>Sangeet Night</h3>
+                    <p><strong>Date:</strong> February 6, 2026</p>
+                    <p><strong>Time:</strong> 5:00 PM</p>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3>Wedding Ceremony</h3>
+                    <p><strong>Date:</strong> February 7, 2026</p>
+                    <p><strong>Time:</strong> 11:30 AM</p>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-icon">
+                        <i class="fas fa-champagne-glasses"></i>
+                    </div>
+                    <h3>Reception</h3>
+                    <p><strong>Date:</strong> February 7, 2026</p>
+                    <p><strong>Time:</strong> 6:00 PM</p>
+                </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Photo Gallery Section -->
+    <section id="gallery" class="gallery">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Our Gallery</h2>
+                <p class="section-subtitle">Capturing our journey together</p>
+            </div>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="images/gallery-1.JPG" alt="Rashmi & Yash - Photo 1" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="placeholder-image" style="display: none;">
+                        <i class="fas fa-camera-retro"></i>
+                        <p>Photo 1</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/proposal-photo.jpeg" alt="Rashmi & Yash - Proposal Photo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="placeholder-image" style="display: none;">
+                        <i class="far fa-heart"></i>
+                        <p>Proposal Photo</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/gallery-2.jpeg" alt="Rashmi & Yash - Photo 3" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="placeholder-image" style="display: none;">
+                        <i class="fas fa-camera-retro"></i>
+                        <p>Photo 3</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/gallery-3.jpeg" alt="Rashmi & Yash - Photo 4" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="placeholder-image" style="display: none;">
+                        <i class="fas fa-camera-retro"></i>
+                        <p>Photo 4</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/gallery-4.jpeg" alt="Rashmi & Yash - Photo 5" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="placeholder-image" style="display: none;">
+                        <i class="fas fa-camera-retro"></i>
+                        <p>Photo 5</p>
+                    </div>
+                </div>
+                <div class="gallery-item" style="display: none;">
+                    <img src="images/gallery-5.jpg" alt="Rashmi & Yash - Photo 6" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="placeholder-image" style="display: none;">
+                        <i class="fas fa-camera-retro"></i>
+                        <p>Photo 6</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RSVP Section -->
+    <section id="rsvp" class="rsvp">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">RSVP</h2>
+                <p class="section-subtitle">We can't wait to celebrate with you!</p>
+            </div>
+            <div class="rsvp-content">
+                <form class="rsvp-form" id="rsvpForm">
+                    <div class="form-group">
+                        <label for="name">Full Name*</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email*</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="guests">Number of Guests*</label>
+                        <select id="guests" name="guests" required>
+                            <option value="">Select number of guests</option>
+                            <option value="1">1 Guest</option>
+                            <option value="2">2 Guests</option>
+                            <option value="3">3 Guests</option>
+                            <option value="4">4+ Guests</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="attendance">Will you be attending?*</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="attendance" value="yes" required>
+                                <span class="radio-custom"></span>
+                                Joyfully accepts
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="attendance" value="no" required>
+                                <span class="radio-custom"></span>
+                                Regretfully declines
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Special Message</label>
+                        <textarea id="message" name="message" placeholder="Your message for us (optional)"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send RSVP</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Photo Upload Section -->
+    <section id="photos" class="photo-upload">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Share Your Photos</h2>
+                <p class="section-subtitle">Help us capture every moment by sharing your photos from our special day</p>
+            </div>
+            <div class="upload-content">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h3>Share Your Photos</h3>
+                    <p>Click below to add your photos to our wedding album</p>
+                    <a href="https://photos.app.goo.gl/AZ3A1Lax71MMXhFk9" target="_blank" class="btn btn-primary">
+                        <i class="fab fa-google"></i> Add Photos to Album
+                    </a>
+                    <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
+                        Opens Google Photos - you can upload directly to our shared album
+                    </p>
+                </div>
+                <div class="upload-instructions">
+                    <div class="instruction-item">
+                        <div class="instruction-icon">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <h4>Capture Moments</h4>
+                        <p>Take photos throughout our wedding celebration</p>
+                    </div>
+                    <div class="instruction-item">
+                        <div class="instruction-icon">
+                            <i class="fas fa-upload"></i>
+                        </div>
+                        <h4>Upload Easily</h4>
+                        <p>Simply drag and drop or click to select multiple photos</p>
+                    </div>
+                    <div class="instruction-item">
+                        <div class="instruction-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h4>Share Love</h4>
+                        <p>Help us relive our special day through your eyes</p>
+                    </div>
+                </div>
+                <div class="uploaded-photos" id="uploadedPhotos" style="display: none;">
+                    <h4>Uploaded Photos</h4>
+                    <div class="photos-grid" id="photosGrid"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p><i class="far fa-envelope"></i> rashmi.yash.wedding@gmail.com</p>
+                    <p><i class="fas fa-phone-alt"></i> +91 7387636474</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Wedding Party</h3>
+                    <p>Maid of Honor: Yashasvi Joshi</p>
+                    <p>Made of Honor: Shubham Shah</p>
+                    <p>Best Man: Shubham Shah</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Rashmi & Yash Wedding. Made with <i class="far fa-heart"></i></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="scripts/main.js"></script>
+</body>
+</html>
