@@ -52,10 +52,21 @@
         background-attachment: scroll !important;
         background-position: center center !important;
         background-size: cover !important;
+        background-repeat: no-repeat !important;
     }
     
     .hero {
         min-height: 100vh;
+        background-position: center center !important;
+    }
+    
+    .about {
+        background-position: center center !important;
+        padding: 120px 0;
+    }
+    
+    .details,
+    .gallery {
         background-position: center center !important;
     }
     
@@ -161,6 +172,26 @@
 
 /* Mobile phones */
 @media (max-width: 480px) {
+    /* Additional mobile background fixes */
+    .hero,
+    .about,
+    .details,
+    .gallery {
+        background-attachment: scroll !important;
+        background-position: center center !important;
+        background-size: cover !important;
+        background-repeat: no-repeat !important;
+    }
+    
+    .hero {
+        background-position: center 30% !important;
+    }
+    
+    .about {
+        background-position: center center !important;
+        padding: 100px 0;
+    }
+    
     .nav-container {
         padding: 0 15px;
     }
