@@ -1,7 +1,36 @@
 /* Mobile Responsive Styles */
 
+/* Fix background images for mobile devices */
+@media (max-width: 768px) {
+    .hero,
+    .about,
+    .details,
+    .gallery,
+    .rsvp,
+    .photo-upload {
+        background-attachment: scroll !important;
+        background-position: center center !important;
+        background-size: cover !important;
+    }
+    
+    .hero {
+        min-height: 100vh;
+        background-position: center center !important;
+    }
+}
+
 /* Tablets and small laptops */
 @media (max-width: 1024px) {
+    /* Fix background attachment on tablets */
+    .hero,
+    .about,
+    .details,
+    .gallery,
+    .rsvp,
+    .photo-upload {
+        background-attachment: scroll !important;
+    }
+    
     .container {
         padding: 0 15px;
     }
