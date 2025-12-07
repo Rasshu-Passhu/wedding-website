@@ -371,10 +371,10 @@ h1, h2, h3 {
 
 .wedding-location {
     font-size: 1.4rem;
-    color: #d4a574;
-    text-shadow: 0 0 15px rgba(212, 165, 116, 0.5);
+    color: #CD853F;
+    text-shadow: 0 0 15px rgba(205, 133, 63, 0.7), 0 2px 4px rgba(0, 0, 0, 0.5);
     margin-bottom: 3rem;
-    font-weight: 300;
+    font-weight: 500;
     letter-spacing: 2px;
     font-style: italic;
     animation: fadeInUp 1s ease-out 0.6s both;
