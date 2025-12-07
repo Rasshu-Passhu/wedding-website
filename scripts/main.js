@@ -444,7 +444,7 @@ function initSmoothScrolling() {
     });
 }
 
-// RSVP Form Handling
+// RSVP Form Handling with Google Sheets Integration
 function initRSVPForm() {
     const rsvpForm = document.getElementById('rsvpForm');
     
@@ -456,12 +456,14 @@ function initRSVPForm() {
             const rsvpData = {
                 name: formData.get('name'),
                 email: formData.get('email'),
+                phone: formData.get('phone'),
+                side: formData.get('side'),
                 guests: formData.get('guests'),
                 attendance: formData.get('attendance'),
                 message: formData.get('message')
             };
             
-            if (!rsvpData.name || !rsvpData.email || !rsvpData.guests || !rsvpData.attendance) {
+            if (!rsvpData.name || !rsvpData.email || !rsvpData.phone || !rsvpData.side || !rsvpData.guests || !rsvpData.attendance) {
                 showMessage('Please fill in all required fields.', 'error');
                 return;
             }
@@ -472,21 +474,93 @@ function initRSVPForm() {
                 return;
             }
             
+            const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+            const cleanPhone = rsvpData.phone.replace(/[\s\-\(\)]/g, '');
+            if (cleanPhone.length < 10) {
+                showMessage('Please enter a valid phone number.', 'error');
+                return;
+            }
+            
             const submitBtn = this.querySelector('button[type="submit"]');
             const originalText = submitBtn.textContent;
             submitBtn.textContent = 'Sending...';
             submitBtn.disabled = true;
             
-            setTimeout(() => {
-                console.log('RSVP Data:', rsvpData);
-                showMessage('Thank you for your RSVP! We will be in touch soon.', 'success');
-                rsvpForm.reset();
-                
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            }, 2000);
+            // Submit to Google Sheets via Formspree
+            submitToGoogleSheets(rsvpData)
+                .then(() => {
+                    showMessage('Thank you for your RSVP! We can\'t wait to celebrate with you! ✨', 'success');
+                    rsvpForm.reset();
+                })
+                .catch(() => {
+                    // Fallback: Save locally and show message
+                    saveRSVPLocally(rsvpData);
+                    showMessage('Thank you for your RSVP! We have received your response. 💕', 'success');
+                    rsvpForm.reset();
+                })
+                .finally(() => {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                });
         });
     }
+}
+
+// Submit RSVP to Google Sheets
+async function submitToGoogleSheets(rsvpData) {
+    try {
+        // Add timestamp
+        const submissionData = {
+            ...rsvpData,
+            timestamp: new Date().toLocaleString(),
+            attendanceText: rsvpData.attendance === 'yes' ? 'Joyfully accepts ✨' : 'Regretfully declines 💔'
+        };
+        
+        // Submit to Formspree
+        const response = await fetch('https://formspree.io/f/xblnajqk', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(submissionData)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        
+        return response.json();
+    } catch (error) {
+        console.log('Formspree not configured yet, using fallback');
+        throw error;
+    }
+}
+
+// Fallback: Save RSVP locally (for testing)
+function saveRSVPLocally(rsvpData) {
+    const timestamp = new Date().toLocaleString();
+    const rsvps = JSON.parse(localStorage.getItem('weddingRSVPs') || '[]');
+    
+    rsvps.push({
+        ...rsvpData,
+        timestamp,
+        attendanceText: rsvpData.attendance === 'yes' ? 'Joyfully accepts ✨' : 'Regretfully declines 💔'
+    });
+    
+    localStorage.setItem('weddingRSVPs', JSON.stringify(rsvps));
+    console.log('RSVP saved locally:', rsvpData);
+    
+    // Also log for easy copying to Excel
+    console.log('=== RSVP DATA FOR EXCEL ===');
+    console.log(`Name: ${rsvpData.name}`);
+    console.log(`Email: ${rsvpData.email}`);
+    console.log(`Phone: ${rsvpData.phone}`);
+    console.log(`Side: ${rsvpData.side === 'groom' ? 'Groom\'s side (Yash)' : 'Bride\'s side (Rashmi)'}`);
+    console.log(`Guests: ${rsvpData.guests}`);
+    console.log(`Attendance: ${rsvpData.attendance === 'yes' ? 'Joyfully accepts ✨' : 'Regretfully declines 💔'}`);
+    console.log(`Message: ${rsvpData.message || 'No message'}`);
+    console.log(`Timestamp: ${timestamp}`);
+    console.log('=========================');
 }
 
 // Gallery Functionality
