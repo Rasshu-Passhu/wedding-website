@@ -488,14 +488,16 @@ function initRSVPForm() {
             
             // Submit to Google Sheets via Formspree
             submitToGoogleSheets(rsvpData)
-                .then(() => {
+                .then((result) => {
+                    console.log('RSVP submitted successfully to Formspree:', result);
                     showMessage('Thank you for your RSVP! We can\'t wait to celebrate with you! ✨', 'success');
                     rsvpForm.reset();
                 })
-                .catch(() => {
+                .catch((error) => {
+                    console.error('Formspree submission failed:', error);
                     // Fallback: Save locally and show message
                     saveRSVPLocally(rsvpData);
-                    showMessage('Thank you for your RSVP! We have received your response. 💕', 'success');
+                    showMessage('Thank you for your RSVP! We have received your response. 💕 (Saved locally)', 'success');
                     rsvpForm.reset();
                 })
                 .finally(() => {
@@ -509,29 +511,38 @@ function initRSVPForm() {
 // Submit RSVP to Google Sheets
 async function submitToGoogleSheets(rsvpData) {
     try {
-        // Add timestamp
+        // Add timestamp and format data
         const submissionData = {
             ...rsvpData,
             timestamp: new Date().toLocaleString(),
-            attendanceText: rsvpData.attendance === 'yes' ? 'Joyfully accepts ✨' : 'Regretfully declines 💔'
+            attendanceText: rsvpData.attendance === 'yes' ? 'Joyfully accepts ✨' : 'Regretfully declines 💔',
+            sideText: rsvpData.side === 'groom' ? 'Groom\'s side (Yash)' : 'Bride\'s side (Rashmi)'
         };
         
-        // Submit to Formspree
+        // Create FormData object instead of JSON for better Formspree compatibility
+        const formData = new FormData();
+        Object.keys(submissionData).forEach(key => {
+            formData.append(key, submissionData[key]);
+        });
+        
+        // Submit to Formspree using FormData
         const response = await fetch('https://formspree.io/f/xblnajqk', {
             method: 'POST',
+            body: formData,
             headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(submissionData)
+                'Accept': 'application/json'
+            }
         });
         
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        return response.json();
+        const result = await response.json();
+        console.log('Formspree response:', result);
+        return result;
     } catch (error) {
-        console.log('Formspree not configured yet, using fallback');
+        console.error('Formspree submission error:', error);
         throw error;
     }
 }
