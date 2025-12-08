@@ -75,13 +75,21 @@
         background-repeat: no-repeat !important;
     }
     
-    /* Remove gap between details and gallery sections */
+    /* Create one continuous background by removing gaps */
     .details {
-        padding-bottom: 40px !important;
+        padding-bottom: 0px !important;
+        background-position: center top !important;
     }
     
     .gallery {
-        padding-top: 40px !important;
+        padding-top: 0px !important;
+        background-position: center bottom !important;
+        margin-top: 0 !important;
+    }
+    
+    /* Ensure sections connect seamlessly */
+    .details + .gallery {
+        border-top: none !important;
     }
     
     /* Navigation styles */
@@ -229,13 +237,16 @@
         padding: 100px 0;
     }
     
-    /* Reduce padding to create seamless look */
+    /* Create seamless background between sections */
     .details {
-        padding: 60px 0 30px 0 !important;
+        padding: 60px 0 0px 0 !important;
+        background-position: center top !important;
     }
     
     .gallery {
-        padding: 30px 0 60px 0 !important;
+        padding: 0px 0 60px 0 !important;
+        background-position: center bottom !important;
+        margin-top: 0 !important;
     }
     
     .nav-container {
