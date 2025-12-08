@@ -655,28 +655,33 @@ function initMusicPlayer() {
     
     let isPlaying = false;
     backgroundMusic.volume = 0.3;
-    backgroundMusic.preload = 'metadata'; // Only load metadata initially
     
-    // Delay autoplay attempt to not impact initial load
+    // Try to start music immediately when metadata is loaded
     const attemptAutoplay = () => {
-        if (backgroundMusic.readyState >= 2) { // HAVE_CURRENT_DATA
-            backgroundMusic.play().then(() => {
-                playIcon.style.display = 'none';
-                pauseIcon.style.display = 'inline';
-                isPlaying = true;
-            }).catch(() => {
-                console.log('Autoplay blocked - waiting for user interaction');
-            });
-        }
+        console.log('Attempting autoplay, readyState:', backgroundMusic.readyState);
+        backgroundMusic.play().then(() => {
+            console.log('Autoplay successful!');
+            playIcon.style.display = 'none';
+            pauseIcon.style.display = 'inline';
+            isPlaying = true;
+        }).catch((error) => {
+            console.log('Autoplay blocked:', error.message);
+        });
     };
     
-    // Try autoplay after a delay to not impact initial load
-    setTimeout(attemptAutoplay, 2000);
+    // Try autoplay when metadata loads
+    backgroundMusic.addEventListener('loadedmetadata', attemptAutoplay);
     
-    // Also try autoplay on first user interaction
+    // Try autoplay immediately if already loaded
+    if (backgroundMusic.readyState >= 1) {
+        attemptAutoplay();
+    }
+    
+    // More aggressive autoplay on user interactions
     let hasTriedAutoplay = false;
     const enableAutoplayOnInteraction = () => {
-        if (!hasTriedAutoplay && !isPlaying) {
+        if (!isPlaying) {
+            console.log('User interaction detected, trying autoplay');
             attemptAutoplay();
             hasTriedAutoplay = true;
         }
@@ -685,6 +690,8 @@ function initMusicPlayer() {
     // Listen for any user interaction to enable autoplay
     document.addEventListener('click', enableAutoplayOnInteraction, { once: true });
     document.addEventListener('touchstart', enableAutoplayOnInteraction, { once: true });
+    document.addEventListener('scroll', enableAutoplayOnInteraction, { once: true });
+    document.addEventListener('keydown', enableAutoplayOnInteraction, { once: true });
     
     musicToggle.addEventListener('click', function() {
         if (isPlaying) {
@@ -692,11 +699,13 @@ function initMusicPlayer() {
             playIcon.style.display = 'inline';
             pauseIcon.style.display = 'none';
             isPlaying = false;
+            console.log('Music paused');
         } else {
             backgroundMusic.play().then(() => {
                 playIcon.style.display = 'none';
                 pauseIcon.style.display = 'inline';
                 isPlaying = true;
+                console.log('Music started via button click');
             }).catch(() => {
                 alert('Please click the music button again to start playing!');
             });
