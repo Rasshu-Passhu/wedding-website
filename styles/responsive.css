@@ -306,6 +306,9 @@
         grid-template-columns: 1fr;
         gap: 1rem;
         padding: 0 10px;
+        /* Optimize for performance */
+        will-change: transform;
+        contain: layout style;
     }
     
     .gallery-item {
@@ -314,6 +317,10 @@
         border-radius: 10px;
         overflow: hidden;
         background: rgba(255, 255, 255, 0.1);
+        /* Performance optimizations */
+        transform: translateZ(0); /* Enable hardware acceleration */
+        will-change: transform;
+        contain: layout style paint;
     }
     
     .gallery-item img {
@@ -322,6 +329,23 @@
         object-fit: cover;
         display: block;
         border-radius: 10px;
+        /* Optimize image rendering */
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+        transform: translateZ(0); /* Hardware acceleration */
+        transition: transform 0.2s ease;
+    }
+    
+    /* Add loading animation */
+    .gallery-item:not(.loaded) {
+        opacity: 0.7;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+    }
+    
+    .gallery-item.loaded {
+        opacity: 1;
+        transform: translateY(0);
     }
     
     .placeholder-image {
