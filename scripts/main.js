@@ -656,42 +656,124 @@ function initMusicPlayer() {
     let isPlaying = false;
     backgroundMusic.volume = 0.3;
     
-    // Try to start music immediately when metadata is loaded
-    const attemptAutoplay = () => {
-        console.log('Attempting autoplay, readyState:', backgroundMusic.readyState);
-        backgroundMusic.play().then(() => {
-            console.log('Autoplay successful!');
+    // Detect if mobile device
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // Check if autoplay started (will be muted initially)
+    const checkAutoplayStatus = () => {
+        if (!backgroundMusic.paused && backgroundMusic.muted) {
+            console.log('Autoplay started muted - will unmute on first interaction');
             playIcon.style.display = 'none';
             pauseIcon.style.display = 'inline';
             isPlaying = true;
-        }).catch((error) => {
-            console.log('Autoplay blocked:', error.message);
-        });
-    };
-    
-    // Try autoplay when metadata loads
-    backgroundMusic.addEventListener('loadedmetadata', attemptAutoplay);
-    
-    // Try autoplay immediately if already loaded
-    if (backgroundMusic.readyState >= 1) {
-        attemptAutoplay();
-    }
-    
-    // More aggressive autoplay on user interactions
-    let hasTriedAutoplay = false;
-    const enableAutoplayOnInteraction = () => {
-        if (!isPlaying) {
-            console.log('User interaction detected, trying autoplay');
-            attemptAutoplay();
-            hasTriedAutoplay = true;
+        } else if (!backgroundMusic.paused && !backgroundMusic.muted) {
+            console.log('Autoplay started unmuted - perfect!');
+            playIcon.style.display = 'none';
+            pauseIcon.style.display = 'inline';
+            isPlaying = true;
         }
     };
     
-    // Listen for any user interaction to enable autoplay
-    document.addEventListener('click', enableAutoplayOnInteraction, { once: true });
-    document.addEventListener('touchstart', enableAutoplayOnInteraction, { once: true });
-    document.addEventListener('scroll', enableAutoplayOnInteraction, { once: true });
-    document.addEventListener('keydown', enableAutoplayOnInteraction, { once: true });
+    // Try to unmute and start music
+    const attemptAutoplay = () => {
+        console.log('Attempting autoplay, readyState:', backgroundMusic.readyState, 'isMobile:', isMobile);
+        
+        // If already playing but muted, just unmute
+        if (!backgroundMusic.paused && backgroundMusic.muted) {
+            backgroundMusic.muted = false;
+            playIcon.style.display = 'none';
+            pauseIcon.style.display = 'inline';
+            isPlaying = true;
+            console.log('Unmuted autoplay music!');
+            return;
+        }
+        
+        // Try to start unmuted
+        backgroundMusic.muted = false;
+        const playPromise = backgroundMusic.play();
+        
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                console.log('Autoplay successful!');
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'inline';
+                isPlaying = true;
+            }).catch((error) => {
+                console.log('Autoplay blocked:', error.message);
+                // Try muted autoplay as fallback
+                backgroundMusic.muted = true;
+                backgroundMusic.play().then(() => {
+                    console.log('Muted autoplay successful - will unmute on interaction');
+                    playIcon.style.display = 'none';
+                    pauseIcon.style.display = 'inline';
+                    isPlaying = true;
+                }).catch(() => {
+                    console.log('Even muted autoplay failed');
+                });
+            });
+        }
+    };
+    
+    // Check autoplay status on various events
+    backgroundMusic.addEventListener('loadedmetadata', checkAutoplayStatus);
+    backgroundMusic.addEventListener('canplay', checkAutoplayStatus);
+    backgroundMusic.addEventListener('play', () => {
+        playIcon.style.display = 'none';
+        pauseIcon.style.display = 'inline';
+        isPlaying = true;
+    });
+    
+    // Check immediately if already loaded
+    setTimeout(checkAutoplayStatus, 100);
+    setTimeout(checkAutoplayStatus, 500);
+    
+    // Aggressive attempts for desktop
+    if (!isMobile) {
+        setTimeout(attemptAutoplay, 500);
+        setTimeout(attemptAutoplay, 1000);
+        setTimeout(attemptAutoplay, 2000);
+    }
+    
+    // Unmute on first interaction
+    let hasUnmuted = false;
+    const unmuteOnInteraction = () => {
+        if (!hasUnmuted && isPlaying && backgroundMusic.muted) {
+            backgroundMusic.muted = false;
+            hasUnmuted = true;
+            console.log('Music unmuted on user interaction!');
+        } else if (!isPlaying) {
+            attemptAutoplay();
+        }
+    };
+    
+    // Listen for ANY user interaction
+    const interactionEvents = ['click', 'touchstart', 'scroll', 'keydown', 'mousemove', 'mousedown', 'touchend'];
+    
+    interactionEvents.forEach(eventType => {
+        document.addEventListener(eventType, unmuteOnInteraction, { 
+            once: false, 
+            passive: true 
+        });
+    });
+    
+    // Additional attempts for desktop
+    if (!isMobile) {
+        window.addEventListener('load', () => {
+            setTimeout(checkAutoplayStatus, 500);
+            setTimeout(attemptAutoplay, 1000);
+        });
+        
+        window.addEventListener('focus', attemptAutoplay);
+        
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                setTimeout(checkAutoplayStatus, 100);
+                if (!isPlaying) {
+                    attemptAutoplay();
+                }
+            }
+        });
+    }
     
     musicToggle.addEventListener('click', function() {
         if (isPlaying) {
@@ -701,13 +783,14 @@ function initMusicPlayer() {
             isPlaying = false;
             console.log('Music paused');
         } else {
+            backgroundMusic.muted = false; // Ensure not muted
             backgroundMusic.play().then(() => {
                 playIcon.style.display = 'none';
                 pauseIcon.style.display = 'inline';
                 isPlaying = true;
                 console.log('Music started via button click');
             }).catch(() => {
-                alert('Please click the music button again to start playing!');
+                showMessage('Unable to play music. Please try refreshing the page.', 'error');
             });
         }
     });
