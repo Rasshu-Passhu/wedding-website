@@ -654,36 +654,50 @@ function initMusicPlayer() {
     if (!musicToggle || !backgroundMusic) return;
     
     let isPlaying = false;
+    let userHasPaused = false; // Track if user manually paused
     backgroundMusic.volume = 0.3;
     
     // Detect if mobile device
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
-    // Check if autoplay started (will be muted initially)
-    const checkAutoplayStatus = () => {
-        if (!backgroundMusic.paused && backgroundMusic.muted) {
-            console.log('Autoplay started muted - will unmute on first interaction');
+    // Update UI based on play state
+    const updateUI = () => {
+        if (isPlaying) {
             playIcon.style.display = 'none';
             pauseIcon.style.display = 'inline';
-            isPlaying = true;
-        } else if (!backgroundMusic.paused && !backgroundMusic.muted) {
-            console.log('Autoplay started unmuted - perfect!');
-            playIcon.style.display = 'none';
-            pauseIcon.style.display = 'inline';
-            isPlaying = true;
+        } else {
+            playIcon.style.display = 'inline';
+            pauseIcon.style.display = 'none';
         }
     };
     
-    // Try to unmute and start music
+    // Check if autoplay started (will be muted initially)
+    const checkAutoplayStatus = () => {
+        if (!backgroundMusic.paused && !userHasPaused) {
+            if (backgroundMusic.muted) {
+                console.log('Autoplay started muted - will unmute on first interaction');
+            } else {
+                console.log('Autoplay started unmuted - perfect!');
+            }
+            isPlaying = true;
+            updateUI();
+        }
+    };
+    
+    // Try to unmute and start music (only if user hasn't manually paused)
     const attemptAutoplay = () => {
+        if (userHasPaused) {
+            console.log('User has paused music, skipping autoplay attempt');
+            return;
+        }
+        
         console.log('Attempting autoplay, readyState:', backgroundMusic.readyState, 'isMobile:', isMobile);
         
         // If already playing but muted, just unmute
         if (!backgroundMusic.paused && backgroundMusic.muted) {
             backgroundMusic.muted = false;
-            playIcon.style.display = 'none';
-            pauseIcon.style.display = 'inline';
             isPlaying = true;
+            updateUI();
             console.log('Unmuted autoplay music!');
             return;
         }
@@ -695,18 +709,16 @@ function initMusicPlayer() {
         if (playPromise !== undefined) {
             playPromise.then(() => {
                 console.log('Autoplay successful!');
-                playIcon.style.display = 'none';
-                pauseIcon.style.display = 'inline';
                 isPlaying = true;
+                updateUI();
             }).catch((error) => {
                 console.log('Autoplay blocked:', error.message);
                 // Try muted autoplay as fallback
                 backgroundMusic.muted = true;
                 backgroundMusic.play().then(() => {
                     console.log('Muted autoplay successful - will unmute on interaction');
-                    playIcon.style.display = 'none';
-                    pauseIcon.style.display = 'inline';
                     isPlaying = true;
+                    updateUI();
                 }).catch(() => {
                     console.log('Even muted autoplay failed');
                 });
@@ -714,29 +726,55 @@ function initMusicPlayer() {
         }
     };
     
-    // Check autoplay status on various events
-    backgroundMusic.addEventListener('loadedmetadata', checkAutoplayStatus);
-    backgroundMusic.addEventListener('canplay', checkAutoplayStatus);
+    // Listen for audio events
     backgroundMusic.addEventListener('play', () => {
-        playIcon.style.display = 'none';
-        pauseIcon.style.display = 'inline';
-        isPlaying = true;
+        if (!userHasPaused) {
+            isPlaying = true;
+            updateUI();
+        }
+    });
+    
+    backgroundMusic.addEventListener('pause', () => {
+        isPlaying = false;
+        updateUI();
+    });
+    
+    // Check autoplay status on various events (only if user hasn't paused)
+    backgroundMusic.addEventListener('loadedmetadata', () => {
+        if (!userHasPaused) checkAutoplayStatus();
+    });
+    
+    backgroundMusic.addEventListener('canplay', () => {
+        if (!userHasPaused) checkAutoplayStatus();
     });
     
     // Check immediately if already loaded
-    setTimeout(checkAutoplayStatus, 100);
-    setTimeout(checkAutoplayStatus, 500);
+    setTimeout(() => {
+        if (!userHasPaused) checkAutoplayStatus();
+    }, 100);
     
-    // Aggressive attempts for desktop
+    setTimeout(() => {
+        if (!userHasPaused) checkAutoplayStatus();
+    }, 500);
+    
+    // Aggressive attempts for desktop (only if user hasn't paused)
     if (!isMobile) {
-        setTimeout(attemptAutoplay, 500);
-        setTimeout(attemptAutoplay, 1000);
-        setTimeout(attemptAutoplay, 2000);
+        setTimeout(() => {
+            if (!userHasPaused) attemptAutoplay();
+        }, 500);
+        setTimeout(() => {
+            if (!userHasPaused) attemptAutoplay();
+        }, 1000);
+        setTimeout(() => {
+            if (!userHasPaused) attemptAutoplay();
+        }, 2000);
     }
     
-    // Unmute on first interaction
+    // Unmute on first interaction (only if user hasn't paused)
     let hasUnmuted = false;
     const unmuteOnInteraction = () => {
+        if (userHasPaused) return; // Don't auto-unmute if user paused
+        
         if (!hasUnmuted && isPlaying && backgroundMusic.muted) {
             backgroundMusic.muted = false;
             hasUnmuted = true;
@@ -746,7 +784,7 @@ function initMusicPlayer() {
         }
     };
     
-    // Listen for ANY user interaction
+    // Listen for user interactions (but respect manual pause)
     const interactionEvents = ['click', 'touchstart', 'scroll', 'keydown', 'mousemove', 'mousedown', 'touchend'];
     
     interactionEvents.forEach(eventType => {
@@ -756,17 +794,21 @@ function initMusicPlayer() {
         });
     });
     
-    // Additional attempts for desktop
+    // Additional attempts for desktop (only if user hasn't paused)
     if (!isMobile) {
         window.addEventListener('load', () => {
-            setTimeout(checkAutoplayStatus, 500);
-            setTimeout(attemptAutoplay, 1000);
+            if (!userHasPaused) {
+                setTimeout(checkAutoplayStatus, 500);
+                setTimeout(attemptAutoplay, 1000);
+            }
         });
         
-        window.addEventListener('focus', attemptAutoplay);
+        window.addEventListener('focus', () => {
+            if (!userHasPaused) attemptAutoplay();
+        });
         
         document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) {
+            if (!document.hidden && !userHasPaused) {
                 setTimeout(checkAutoplayStatus, 100);
                 if (!isPlaying) {
                     attemptAutoplay();
@@ -775,21 +817,28 @@ function initMusicPlayer() {
         });
     }
     
-    musicToggle.addEventListener('click', function() {
+    // Manual music toggle - this should always work
+    musicToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
         if (isPlaying) {
+            // User wants to pause
             backgroundMusic.pause();
-            playIcon.style.display = 'inline';
-            pauseIcon.style.display = 'none';
+            userHasPaused = true; // Mark that user manually paused
             isPlaying = false;
-            console.log('Music paused');
+            updateUI();
+            console.log('Music paused by user');
         } else {
+            // User wants to play
+            userHasPaused = false; // Reset pause flag
             backgroundMusic.muted = false; // Ensure not muted
             backgroundMusic.play().then(() => {
-                playIcon.style.display = 'none';
-                pauseIcon.style.display = 'inline';
                 isPlaying = true;
+                updateUI();
                 console.log('Music started via button click');
-            }).catch(() => {
+            }).catch((error) => {
+                console.error('Failed to start music:', error);
                 showMessage('Unable to play music. Please try refreshing the page.', 'error');
             });
         }
