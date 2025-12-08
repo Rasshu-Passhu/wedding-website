@@ -318,14 +318,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Initialize all website functionality
 function initializeWebsite() {
+    // Initialize critical functionality first
     initMobileNavigation();
-    initCountdown();
-    initScrollAnimations();
     initSmoothScrolling();
-    initRSVPForm();
-    initGallery();
-    initMusicPlayer();
-    initPhotoUpload();
+    
+    // Defer heavy operations to reduce initial load lag
+    setTimeout(() => {
+        initCountdown();
+    }, 100);
+    
+    setTimeout(() => {
+        initScrollAnimations();
+    }, 200);
+    
+    setTimeout(() => {
+        initRSVPForm();
+        initGallery();
+    }, 300);
+    
+    setTimeout(() => {
+        initMusicPlayer();
+        initPhotoUpload();
+    }, 500);
 }
 
 // Mobile Navigation
@@ -360,6 +374,15 @@ function initMobileNavigation() {
 function initCountdown() {
     const weddingDate = new Date('2026-02-07T11:30:00').getTime();
     
+    const daysElement = document.getElementById('days');
+    const hoursElement = document.getElementById('hours');
+    const minutesElement = document.getElementById('minutes');
+    const secondsElement = document.getElementById('seconds');
+    
+    if (!daysElement || !hoursElement || !minutesElement || !secondsElement) {
+        return;
+    }
+    
     function updateCountdown() {
         const now = new Date().getTime();
         const distance = weddingDate - now;
@@ -375,15 +398,19 @@ function initCountdown() {
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        const daysElement = document.getElementById('days');
-        const hoursElement = document.getElementById('hours');
-        const minutesElement = document.getElementById('minutes');
-        const secondsElement = document.getElementById('seconds');
-
-        if (daysElement) daysElement.textContent = days.toString().padStart(2, '0');
-        if (hoursElement) hoursElement.textContent = hours.toString().padStart(2, '0');
-        if (minutesElement) minutesElement.textContent = minutes.toString().padStart(2, '0');
-        if (secondsElement) secondsElement.textContent = seconds.toString().padStart(2, '0');
+        // Only update if values changed to reduce DOM manipulation
+        if (daysElement.textContent !== days.toString().padStart(2, '0')) {
+            daysElement.textContent = days.toString().padStart(2, '0');
+        }
+        if (hoursElement.textContent !== hours.toString().padStart(2, '0')) {
+            hoursElement.textContent = hours.toString().padStart(2, '0');
+        }
+        if (minutesElement.textContent !== minutes.toString().padStart(2, '0')) {
+            minutesElement.textContent = minutes.toString().padStart(2, '0');
+        }
+        if (secondsElement.textContent !== seconds.toString().padStart(2, '0')) {
+            secondsElement.textContent = seconds.toString().padStart(2, '0');
+        }
     }
 
     updateCountdown();
@@ -393,14 +420,16 @@ function initCountdown() {
 // Scroll Animations
 function initScrollAnimations() {
     const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
+        threshold: 0.05,
+        rootMargin: '0px 0px -30px 0px'
     };
 
     const observer = new IntersectionObserver(function(entries) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('animate');
+                // Stop observing once animated to improve performance
+                observer.unobserve(entry.target);
             }
         });
     }, observerOptions);
@@ -411,12 +440,22 @@ function initScrollAnimations() {
         observer.observe(element);
     });
 
-    window.addEventListener('scroll', function() {
+    // Throttle scroll event for navbar
+    let ticking = false;
+    const updateNavbar = () => {
         const navbar = document.querySelector('.navbar');
         if (window.scrollY > 100) {
             navbar.classList.add('scrolled');
         } else {
             navbar.classList.remove('scrolled');
+        }
+        ticking = false;
+    };
+
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            requestAnimationFrame(updateNavbar);
+            ticking = true;
         }
     });
 }
@@ -616,21 +655,23 @@ function initMusicPlayer() {
     
     let isPlaying = false;
     backgroundMusic.volume = 0.3;
+    backgroundMusic.preload = 'metadata'; // Only load metadata initially
     
-    // Try to autoplay on page load (requires user interaction first)
+    // Delay autoplay attempt to not impact initial load
     const attemptAutoplay = () => {
-        backgroundMusic.play().then(() => {
-            playIcon.style.display = 'none';
-            pauseIcon.style.display = 'inline';
-            isPlaying = true;
-        }).catch(() => {
-            // Autoplay blocked, wait for user interaction
-            console.log('Autoplay blocked - waiting for user interaction');
-        });
+        if (backgroundMusic.readyState >= 2) { // HAVE_CURRENT_DATA
+            backgroundMusic.play().then(() => {
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'inline';
+                isPlaying = true;
+            }).catch(() => {
+                console.log('Autoplay blocked - waiting for user interaction');
+            });
+        }
     };
     
-    // Try autoplay immediately
-    attemptAutoplay();
+    // Try autoplay after a delay to not impact initial load
+    setTimeout(attemptAutoplay, 2000);
     
     // Also try autoplay on first user interaction
     let hasTriedAutoplay = false;
