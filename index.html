@@ -50,7 +50,7 @@
             <i class="fas fa-play" id="playIcon"></i>
             <i class="fas fa-pause" id="pauseIcon" style="display: none;"></i>
         </button>
-        <audio id="backgroundMusic" loop>
+        <audio id="backgroundMusic" loop preload="none">
             <source src="https://www.soundjay.com/misc/sounds/beep-07a.wav" type="audio/wav">
             <source src="music/wedding-song.mp3" type="audio/mpeg">
             <source src="music/wedding-song.wav" type="audio/wav">
@@ -102,14 +102,14 @@
                             <i class="fas fa-crown"></i>
                         </div>
                         <h3>How We Met</h3>
-                        <p>We were in the same coaching class and the same college back in 11th standard in 2013. Between Chemistry practicals and those silly jokes Yash used to crack, we found ourselves laughing together a little too often. Somewhere in those shared smiles, it all quietly began.</p>
+                        <p>We were in the same coaching class and the same college back in 11th standard. It was in those Chemistry labs where we'd share laughs over the jokes Yash would tell, and those moments slowly paved the way for something special.</p>
                     </div>
                     <div class="story-card">
                         <div class="story-icon">
                             <i class="far fa-gem"></i>
                         </div>
                         <h3>The Proposal</h3>
-                        <p>We were in Jaipur for a friend’s wedding, and we had already planned a pre-wedding photoshoot. At the final venue, right in front of the majestic Hawa Mahal, Yash proposed — and Rashmi, just as everyone expected, said yes.</p>
+                        <p>We were in Jaipur for a friend's wedding, and we had already planned a pre-wedding photoshoot. At the final venue, right in front of the majestic Hawa Mahal, instead of just posing, Yash proposed, and Rashmi, which we all already knew, said yes!</p>
                     </div>
                     <div class="story-card">
                         <div class="story-icon">
@@ -187,42 +187,42 @@
             </div>
             <div class="gallery-grid">
                 <div class="gallery-item">
-                    <img src="images/gallery-1.JPG" alt="Rashmi & Yash - Photo 1" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <img src="images/gallery-1.JPG" alt="Rashmi & Yash - Photo 1" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div class="placeholder-image" style="display: none;">
                         <i class="fas fa-camera-retro"></i>
                         <p>Photo 1</p>
                     </div>
                 </div>
                 <div class="gallery-item">
-                    <img src="images/proposal-photo.jpeg" alt="Rashmi & Yash - Proposal Photo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <img src="images/proposal-photo.jpeg" alt="Rashmi & Yash - Proposal Photo" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div class="placeholder-image" style="display: none;">
                         <i class="far fa-heart"></i>
                         <p>Proposal Photo</p>
                     </div>
                 </div>
                 <div class="gallery-item">
-                    <img src="images/gallery-2.jpeg" alt="Rashmi & Yash - Photo 3" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <img src="images/gallery-2.jpeg" alt="Rashmi & Yash - Photo 3" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div class="placeholder-image" style="display: none;">
                         <i class="fas fa-camera-retro"></i>
                         <p>Photo 3</p>
                     </div>
                 </div>
                 <div class="gallery-item">
-                    <img src="images/gallery-3.jpeg" alt="Rashmi & Yash - Photo 4" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <img src="images/gallery-3.jpeg" alt="Rashmi & Yash - Photo 4" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div class="placeholder-image" style="display: none;">
                         <i class="fas fa-camera-retro"></i>
                         <p>Photo 4</p>
                     </div>
                 </div>
                 <div class="gallery-item">
-                    <img src="images/gallery-4.jpeg" alt="Rashmi & Yash - Photo 5" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <img src="images/gallery-4.jpeg" alt="Rashmi & Yash - Photo 5" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div class="placeholder-image" style="display: none;">
                         <i class="fas fa-camera-retro"></i>
                         <p>Photo 5</p>
                     </div>
                 </div>
                 <div class="gallery-item" style="display: none;">
-                    <img src="images/gallery-5.jpg" alt="Rashmi & Yash - Photo 6" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <img src="images/gallery-5.jpg" alt="Rashmi & Yash - Photo 6" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div class="placeholder-image" style="display: none;">
                         <i class="fas fa-camera-retro"></i>
                         <p>Photo 6</p>
@@ -380,5 +380,3 @@
     <script src="scripts/main.js"></script>
 </body>
 </html>
-
-
