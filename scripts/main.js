@@ -634,6 +634,18 @@ function saveRSVPLocally(rsvpData) {
 function initGallery() {
     const galleryItems = document.querySelectorAll('.gallery-item');
     
+    // Preload gallery images for better performance
+    const galleryImages = document.querySelectorAll('.gallery-item img');
+    galleryImages.forEach(img => {
+        // Remove lazy loading for gallery section
+        img.removeAttribute('loading');
+        
+        // Preload images when gallery section is near viewport
+        const preloadImg = new Image();
+        preloadImg.src = img.src;
+    });
+    
+    // Optimize gallery interactions
     galleryItems.forEach(item => {
         item.addEventListener('click', function() {
             this.style.transform = 'scale(0.95)';
@@ -641,6 +653,25 @@ function initGallery() {
                 this.style.transform = '';
             }, 150);
         });
+    });
+    
+    // Create intersection observer for gallery performance
+    const galleryObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('loaded');
+                // Stop observing once loaded
+                galleryObserver.unobserve(entry.target);
+            }
+        });
+    }, {
+        rootMargin: '50px 0px', // Start loading 50px before it comes into view
+        threshold: 0.1
+    });
+    
+    // Observe all gallery items
+    galleryItems.forEach(item => {
+        galleryObserver.observe(item);
     });
 }
 
