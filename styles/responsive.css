@@ -303,14 +303,14 @@
     }
     
     .gallery-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.8rem;
+        grid-template-columns: 1fr;
+        gap: 1rem;
         padding: 0 10px;
     }
     
     .gallery-item {
         width: 100%;
-        aspect-ratio: 1;
+        aspect-ratio: 4/3;
         border-radius: 10px;
         overflow: hidden;
         background: rgba(255, 255, 255, 0.1);
@@ -352,6 +352,30 @@
     .btn {
         padding: 0.8rem 1.5rem;
         font-size: 0.8rem;
+    }
+    
+    /* Fix music player button for mobile */
+    .music-player {
+        position: fixed !important;
+        bottom: 20px !important;
+        right: 20px !important;
+        z-index: 1000 !important;
+    }
+    
+    .music-toggle {
+        width: 50px !important;
+        height: 50px !important;
+        border-radius: 25px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: rgba(212, 165, 116, 0.9) !important;
+        border: none !important;
+        color: white !important;
+        font-size: 1.2rem !important;
+        cursor: pointer !important;
+        touch-action: manipulation !important;
+        -webkit-tap-highlight-color: transparent !important;
     }
     
     .footer {
