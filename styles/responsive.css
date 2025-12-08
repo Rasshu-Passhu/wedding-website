@@ -65,9 +65,23 @@
         padding: 120px 0;
     }
     
+    /* Make details and gallery share continuous background */
     .details,
     .gallery {
+        background-image: url('../images/details-background.jpeg') !important;
         background-position: center center !important;
+        background-size: cover !important;
+        background-attachment: scroll !important;
+        background-repeat: no-repeat !important;
+    }
+    
+    /* Remove gap between details and gallery sections */
+    .details {
+        padding-bottom: 40px !important;
+    }
+    
+    .gallery {
+        padding-top: 40px !important;
     }
     
     /* Navigation styles */
@@ -149,14 +163,14 @@
     }
     
     .gallery-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
         gap: 1rem;
     }
     
     .gallery-item {
         width: 100%;
         max-width: none;
-        aspect-ratio: 1;
+        aspect-ratio: 4/3;
     }
     
     .gallery-item img {
@@ -196,6 +210,16 @@
         background-repeat: no-repeat !important;
     }
     
+    /* Make details and gallery share continuous background on small mobile */
+    .details,
+    .gallery {
+        background-image: url('../images/details-background.jpeg') !important;
+        background-position: center center !important;
+        background-size: cover !important;
+        background-attachment: scroll !important;
+        background-repeat: no-repeat !important;
+    }
+    
     .hero {
         background-position: center 30% !important;
     }
@@ -203,6 +227,15 @@
     .about {
         background-position: center center !important;
         padding: 100px 0;
+    }
+    
+    /* Reduce padding to create seamless look */
+    .details {
+        padding: 60px 0 30px 0 !important;
+    }
+    
+    .gallery {
+        padding: 30px 0 60px 0 !important;
     }
     
     .nav-container {
