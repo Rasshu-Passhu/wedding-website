@@ -511,21 +511,25 @@ function initRSVPForm() {
 // Submit RSVP to Google Sheets
 async function submitToGoogleSheets(rsvpData) {
     try {
-        // Add timestamp and format data
-        const submissionData = {
-            ...rsvpData,
-            timestamp: new Date().toLocaleString(),
-            attendanceText: rsvpData.attendance === 'yes' ? 'Joyfully accepts ✨' : 'Regretfully declines 💔',
-            sideText: rsvpData.side === 'groom' ? 'Groom\'s side (Yash)' : 'Bride\'s side (Rashmi)'
-        };
+        console.log('Submitting RSVP data:', rsvpData);
         
-        // Create FormData object instead of JSON for better Formspree compatibility
+        // Create FormData with the exact field names
         const formData = new FormData();
-        Object.keys(submissionData).forEach(key => {
-            formData.append(key, submissionData[key]);
-        });
+        formData.append('name', rsvpData.name);
+        formData.append('email', rsvpData.email);
+        formData.append('phone', rsvpData.phone);
+        formData.append('side', rsvpData.side === 'groom' ? 'Yash\'s side' : 'Rashmi\'s side');
+        formData.append('guests', rsvpData.guests);
+        formData.append('attendance', rsvpData.attendance === 'yes' ? 'Joyfully accepts' : 'Regretfully declines');
+        formData.append('message', rsvpData.message || '');
+        formData.append('timestamp', new Date().toLocaleString());
         
-        // Submit to Formspree using FormData
+        console.log('FormData entries:');
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);
+        }
+        
+        // Submit to Formspree
         const response = await fetch('https://formspree.io/f/xblnajqk', {
             method: 'POST',
             body: formData,
@@ -534,12 +538,25 @@ async function submitToGoogleSheets(rsvpData) {
             }
         });
         
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
+        
+        const responseText = await response.text();
+        console.log('Response text:', responseText);
+        
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`HTTP error! status: ${response.status}, response: ${responseText}`);
         }
         
-        const result = await response.json();
-        console.log('Formspree response:', result);
+        // Try to parse as JSON
+        let result;
+        try {
+            result = JSON.parse(responseText);
+        } catch (e) {
+            result = { message: 'Success', response: responseText };
+        }
+        
+        console.log('Formspree response parsed:', result);
         return result;
     } catch (error) {
         console.error('Formspree submission error:', error);
@@ -599,6 +616,34 @@ function initMusicPlayer() {
     
     let isPlaying = false;
     backgroundMusic.volume = 0.3;
+    
+    // Try to autoplay on page load (requires user interaction first)
+    const attemptAutoplay = () => {
+        backgroundMusic.play().then(() => {
+            playIcon.style.display = 'none';
+            pauseIcon.style.display = 'inline';
+            isPlaying = true;
+        }).catch(() => {
+            // Autoplay blocked, wait for user interaction
+            console.log('Autoplay blocked - waiting for user interaction');
+        });
+    };
+    
+    // Try autoplay immediately
+    attemptAutoplay();
+    
+    // Also try autoplay on first user interaction
+    let hasTriedAutoplay = false;
+    const enableAutoplayOnInteraction = () => {
+        if (!hasTriedAutoplay && !isPlaying) {
+            attemptAutoplay();
+            hasTriedAutoplay = true;
+        }
+    };
+    
+    // Listen for any user interaction to enable autoplay
+    document.addEventListener('click', enableAutoplayOnInteraction, { once: true });
+    document.addEventListener('touchstart', enableAutoplayOnInteraction, { once: true });
     
     musicToggle.addEventListener('click', function() {
         if (isPlaying) {
