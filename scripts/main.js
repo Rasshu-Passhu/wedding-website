@@ -322,6 +322,9 @@ function initializeWebsite() {
     initMobileNavigation();
     initSmoothScrolling();
     
+    // Initialize critical functionality immediately
+    initRSVPForm(); // Move this to run immediately
+    
     // Defer heavy operations to reduce initial load lag
     setTimeout(() => {
         initCountdown();
@@ -332,7 +335,6 @@ function initializeWebsite() {
     }, 200);
     
     setTimeout(() => {
-        initRSVPForm();
         initGallery();
     }, 300);
     
@@ -508,6 +510,8 @@ function initSmoothScrolling() {
 
 // RSVP Form Handling with Google Sheets Integration
 function initRSVPForm() {
+    console.log('Initializing RSVP form...');
+    
     const rsvpForm = document.getElementById('rsvpForm');
     const attendanceYes = document.getElementById('attendanceYes');
     const attendanceNo = document.getElementById('attendanceNo');
@@ -515,38 +519,67 @@ function initRSVPForm() {
     const sideInputs = document.querySelectorAll('input[name="side"]');
     const guestsSelect = document.getElementById('guests');
     
+    console.log('RSVP Form elements found:', {
+        form: !!rsvpForm,
+        attendanceYes: !!attendanceYes,
+        attendanceNo: !!attendanceNo,
+        conditionalFields: !!conditionalFields,
+        sideInputs: sideInputs.length,
+        guestsSelect: !!guestsSelect
+    });
+    
+    if (!rsvpForm || !attendanceYes || !attendanceNo || !conditionalFields) {
+        console.error('RSVP form elements not found!');
+        return;
+    }
+    
     if (rsvpForm) {
         // Handle attendance selection to show/hide conditional fields
         const handleAttendanceChange = () => {
             const emailInput = document.getElementById('email');
             const phoneInput = document.getElementById('phone');
             
+            console.log('Attendance changed:', {
+                yesChecked: attendanceYes.checked,
+                noChecked: attendanceNo.checked
+            });
+            
             if (attendanceYes.checked) {
+                console.log('Showing conditional fields');
                 conditionalFields.style.display = 'block';
                 // Make conditional fields required
-                emailInput.setAttribute('required', 'true');
-                phoneInput.setAttribute('required', 'true');
+                if (emailInput) emailInput.setAttribute('required', 'true');
+                if (phoneInput) phoneInput.setAttribute('required', 'true');
                 sideInputs.forEach(input => input.setAttribute('required', 'true'));
-                guestsSelect.setAttribute('required', 'true');
+                if (guestsSelect) guestsSelect.setAttribute('required', 'true');
             } else if (attendanceNo.checked) {
+                console.log('Hiding conditional fields');
                 conditionalFields.style.display = 'none';
                 // Remove required attribute from conditional fields
-                emailInput.removeAttribute('required');
-                emailInput.value = ''; // Clear value
-                phoneInput.removeAttribute('required');
-                phoneInput.value = ''; // Clear value
+                if (emailInput) {
+                    emailInput.removeAttribute('required');
+                    emailInput.value = ''; // Clear value
+                }
+                if (phoneInput) {
+                    phoneInput.removeAttribute('required');
+                    phoneInput.value = ''; // Clear value
+                }
                 sideInputs.forEach(input => {
                     input.removeAttribute('required');
                     input.checked = false; // Clear selection
                 });
-                guestsSelect.removeAttribute('required');
-                guestsSelect.value = ''; // Clear selection
+                if (guestsSelect) {
+                    guestsSelect.removeAttribute('required');
+                    guestsSelect.value = ''; // Clear selection
+                }
             }
         };
         
         // Add event listeners for attendance radio buttons
         attendanceYes.addEventListener('change', handleAttendanceChange);
         attendanceNo.addEventListener('change', handleAttendanceChange);
+        
+        console.log('RSVP form event listeners added');
         
         rsvpForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -597,7 +630,7 @@ function initRSVPForm() {
             // Submit to Google Sheets via Formspree
             submitToGoogleSheets(rsvpData)
                 .then((result) => {
-                    console.log('RSVP submitted successfully to Formspree:', result);
+                    console.log('RSVP submitted successfully to Google Sheets:', result);
                     if (rsvpData.attendance === 'yes') {
                         showMessage('Thank you for your RSVP! We can\'t wait to celebrate with you! ✨', 'success');
                     } else {
@@ -607,7 +640,7 @@ function initRSVPForm() {
                     conditionalFields.style.display = 'none'; // Hide conditional fields after reset
                 })
                 .catch((error) => {
-                    console.error('Formspree submission failed:', error);
+                    console.error('Google Sheets submission failed:', error);
                     // Fallback: Save locally and show message
                     saveRSVPLocally(rsvpData);
                     if (rsvpData.attendance === 'yes') {
