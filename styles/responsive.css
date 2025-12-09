@@ -68,7 +68,8 @@
     /* Make details and gallery share continuous background */
     .details,
     .gallery {
-        background-image: url('../images/details-background.jpeg') !important;
+        /* Updated extension from .jpeg to .jpg */
+        background-image: url('../images/details-background.jpg') !important;
         background-position: center center !important;
         background-size: cover !important;
         background-attachment: scroll !important;
@@ -221,7 +222,8 @@
     /* Make details and gallery share continuous background on small mobile */
     .details,
     .gallery {
-        background-image: url('../images/details-background.jpeg') !important;
+        /* Updated extension from .jpeg to .jpg */
+        background-image: url('../images/details-background.jpg') !important;
         background-position: center center !important;
         background-size: cover !important;
         background-attachment: scroll !important;
