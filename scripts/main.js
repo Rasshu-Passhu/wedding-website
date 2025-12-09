@@ -322,9 +322,6 @@ function initializeWebsite() {
     initMobileNavigation();
     initSmoothScrolling();
     
-    // Initialize critical functionality immediately
-    initRSVPForm(); // Move this to run immediately
-    
     // Defer heavy operations to reduce initial load lag
     setTimeout(() => {
         initCountdown();
@@ -335,6 +332,8 @@ function initializeWebsite() {
     }, 200);
     
     setTimeout(() => {
+        initRSVPForm();
+        initDeclinePrank(); // Add this line
         initGallery();
     }, 300);
     
@@ -510,8 +509,6 @@ function initSmoothScrolling() {
 
 // RSVP Form Handling with Google Sheets Integration
 function initRSVPForm() {
-    console.log('Initializing RSVP form...');
-    
     const rsvpForm = document.getElementById('rsvpForm');
     const attendanceYes = document.getElementById('attendanceYes');
     const attendanceNo = document.getElementById('attendanceNo');
@@ -519,67 +516,47 @@ function initRSVPForm() {
     const sideInputs = document.querySelectorAll('input[name="side"]');
     const guestsSelect = document.getElementById('guests');
     
-    console.log('RSVP Form elements found:', {
-        form: !!rsvpForm,
-        attendanceYes: !!attendanceYes,
-        attendanceNo: !!attendanceNo,
-        conditionalFields: !!conditionalFields,
-        sideInputs: sideInputs.length,
-        guestsSelect: !!guestsSelect
-    });
-    
-    if (!rsvpForm || !attendanceYes || !attendanceNo || !conditionalFields) {
-        console.error('RSVP form elements not found!');
-        return;
-    }
-    
     if (rsvpForm) {
         // Handle attendance selection to show/hide conditional fields
         const handleAttendanceChange = () => {
             const emailInput = document.getElementById('email');
             const phoneInput = document.getElementById('phone');
             
-            console.log('Attendance changed:', {
-                yesChecked: attendanceYes.checked,
-                noChecked: attendanceNo.checked
-            });
-            
+            // Get the container for the decline option to hide the whole button
+            const declineOption = attendanceNo.closest('.radio-option');
+
             if (attendanceYes.checked) {
-                console.log('Showing conditional fields');
                 conditionalFields.style.display = 'block';
+                
+                // Hide the decline button entirely when they say YES!
+                if (declineOption) {
+                    declineOption.style.display = 'none';
+                }
+
                 // Make conditional fields required
-                if (emailInput) emailInput.setAttribute('required', 'true');
-                if (phoneInput) phoneInput.setAttribute('required', 'true');
+                emailInput.setAttribute('required', 'true');
+                phoneInput.setAttribute('required', 'true');
                 sideInputs.forEach(input => input.setAttribute('required', 'true'));
-                if (guestsSelect) guestsSelect.setAttribute('required', 'true');
+                guestsSelect.setAttribute('required', 'true');
             } else if (attendanceNo.checked) {
-                console.log('Hiding conditional fields');
                 conditionalFields.style.display = 'none';
                 // Remove required attribute from conditional fields
-                if (emailInput) {
-                    emailInput.removeAttribute('required');
-                    emailInput.value = ''; // Clear value
-                }
-                if (phoneInput) {
-                    phoneInput.removeAttribute('required');
-                    phoneInput.value = ''; // Clear value
-                }
+                emailInput.removeAttribute('required');
+                emailInput.value = ''; // Clear value
+                phoneInput.removeAttribute('required');
+                phoneInput.value = ''; // Clear value
                 sideInputs.forEach(input => {
                     input.removeAttribute('required');
                     input.checked = false; // Clear selection
                 });
-                if (guestsSelect) {
-                    guestsSelect.removeAttribute('required');
-                    guestsSelect.value = ''; // Clear selection
-                }
+                guestsSelect.removeAttribute('required');
+                guestsSelect.value = ''; // Clear selection
             }
         };
         
         // Add event listeners for attendance radio buttons
         attendanceYes.addEventListener('change', handleAttendanceChange);
         attendanceNo.addEventListener('change', handleAttendanceChange);
-        
-        console.log('RSVP form event listeners added');
         
         rsvpForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -630,7 +607,7 @@ function initRSVPForm() {
             // Submit to Google Sheets via Formspree
             submitToGoogleSheets(rsvpData)
                 .then((result) => {
-                    console.log('RSVP submitted successfully to Google Sheets:', result);
+                    console.log('RSVP submitted successfully to Formspree:', result);
                     if (rsvpData.attendance === 'yes') {
                         showMessage('Thank you for your RSVP! We can\'t wait to celebrate with you! ✨', 'success');
                     } else {
@@ -640,7 +617,7 @@ function initRSVPForm() {
                     conditionalFields.style.display = 'none'; // Hide conditional fields after reset
                 })
                 .catch((error) => {
-                    console.error('Google Sheets submission failed:', error);
+                    console.error('Formspree submission failed:', error);
                     // Fallback: Save locally and show message
                     saveRSVPLocally(rsvpData);
                     if (rsvpData.attendance === 'yes') {
@@ -657,6 +634,59 @@ function initRSVPForm() {
                 });
         });
     }
+}
+
+// Add this new function
+function initDeclinePrank() {
+    const declineInput = document.getElementById('attendanceNo');
+    if (!declineInput) return;
+
+    const declineLabel = declineInput.closest('.radio-option');
+    if (!declineLabel) return;
+    
+    // Find the container to constrain movement within
+    const container = document.querySelector('.rsvp-content');
+    if (!container) return;
+
+    // Make sure container has relative positioning so absolute children stay inside
+    // We can set this via JS to be safe, or assume it's in CSS
+    container.style.position = 'relative';
+
+    const moveButton = (e) => {
+        if (e.type === 'click' || e.type === 'touchstart') {
+            e.preventDefault();
+        }
+
+        // Get dimensions
+        const containerRect = container.getBoundingClientRect();
+        const buttonRect = declineLabel.getBoundingClientRect();
+        
+        // Calculate max allowed positions within the container
+        // padding ensures it doesn't touch the very edge
+        const padding = 20;
+        const maxLeft = containerRect.width - buttonRect.width - padding;
+        const maxTop = containerRect.height - buttonRect.height - padding;
+
+        // Generate random position within these bounds
+        const newLeft = Math.max(padding, Math.random() * maxLeft);
+        const newTop = Math.max(padding, Math.random() * maxTop);
+
+        // Apply styles to move it
+        declineLabel.style.position = 'absolute';
+        declineLabel.style.left = `${newLeft}px`;
+        declineLabel.style.top = `${newTop}px`;
+        
+        // Ensure it sits above other form elements
+        declineLabel.style.zIndex = '10';
+        declineLabel.style.transition = 'all 0.3s ease-out';
+        
+        // Optional: Add a fun rotation
+        declineLabel.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
+    };
+
+    declineLabel.addEventListener('mouseover', moveButton);
+    declineLabel.addEventListener('touchstart', moveButton);
+    declineLabel.addEventListener('click', moveButton);
 }
 
 // Submit RSVP to Google Sheets
