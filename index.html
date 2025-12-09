@@ -67,7 +67,7 @@
             <i class="fas fa-play" id="playIcon"></i>
             <i class="fas fa-pause" id="pauseIcon" style="display: none;"></i>
         </button>
-        <audio id="backgroundMusic" loop preload="auto" autoplay muted>
+        <audio id="backgroundMusic" loop preload="auto">
             <source src="music/wedding-song.mp3" type="audio/mpeg">
             <source src="music/wedding-song.wav" type="audio/wav">
             <source src="https://www.soundjay.com/misc/sounds/beep-07a.wav" type="audio/wav">
@@ -263,58 +263,63 @@
                         <input type="text" id="name" name="name" required>
                     </div>
                     <div class="form-group">
-                        <label for="email">Email*</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Phone Number*</label>
-                        <input type="tel" id="phone" name="phone" placeholder="+91 9999999999" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="side">Are you from?*</label>
-                        <div class="radio-group side-selection">
-                            <label class="radio-option">
-                                <input type="radio" name="side" value="groom" required>
-                                <span class="radio-custom"></span>
-                                Yash's side
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="side" value="bride" required>
-                                <span class="radio-custom"></span>
-                                Rashmi's side
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="guests">Number of Guests*</label>
-                        <select id="guests" name="guests" required>
-                            <option value="">Select number of guests</option>
-                            <option value="1">1 Guest</option>
-                            <option value="2">2 Guests</option>
-                            <option value="3">3 Guests</option>
-                            <option value="4">4+ Guests</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
                         <label for="attendance">Will you be attending?*</label>
                         <div class="radio-group">
                             <label class="radio-option">
-                                <input type="radio" name="attendance" value="yes" required>
+                                <input type="radio" name="attendance" value="yes" id="attendanceYes" required>
                                 <span class="radio-custom"></span>
                                 Joyfully accepts
                             </label>
                             <label class="radio-option">
-                                <input type="radio" name="attendance" value="no" required>
+                                <input type="radio" name="attendance" value="no" id="attendanceNo" required>
                                 <span class="radio-custom"></span>
                                 Regretfully declines
                             </label>
                         </div>
                     </div>
+                    
+                    <!-- Conditional fields - only show if attending -->
+                    <div id="conditionalFields" style="display: none;">
+                        <div class="form-group">
+                            <label for="email">Email*</label>
+                            <input type="email" id="email" name="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number*</label>
+                            <input type="tel" id="phone" name="phone" placeholder="+91 9999999999">
+                        </div>
+                        <div class="form-group">
+                            <label for="side">Are you from?*</label>
+                            <div class="radio-group side-selection">
+                                <label class="radio-option">
+                                    <input type="radio" name="side" value="groom">
+                                    <span class="radio-custom"></span>
+                                    Yash's side
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="side" value="bride">
+                                    <span class="radio-custom"></span>
+                                    Rashmi's side
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="guests">Number of Guests*</label>
+                            <select id="guests" name="guests">
+                                <option value="">Select number of guests</option>
+                                <option value="1">1 Guest</option>
+                                <option value="2">2 Guests</option>
+                                <option value="3">3 Guests</option>
+                                <option value="4">4+ Guests</option>
+                            </select>
+                        </div>
+                    </div>
+                    
                     <div class="form-group">
                         <label for="message">Special Message</label>
                         <textarea id="message" name="message" placeholder="Your message for us (optional)"></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary">Send RSVP</button>
+                    <button type="submit" class="btn btn-primary">Répondez S'il Vous Plaît</button>
                 </form>
             </div>
         </div>
@@ -397,4 +402,3 @@
     <script src="scripts/main.js"></script>
 </body>
 </html>
-
