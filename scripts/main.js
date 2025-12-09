@@ -644,44 +644,70 @@ function initDeclinePrank() {
     const declineLabel = declineInput.closest('.radio-option');
     if (!declineLabel) return;
     
-    // Find the container to constrain movement within
     const container = document.querySelector('.rsvp-content');
     if (!container) return;
 
-    // Make sure container has relative positioning so absolute children stay inside
-    // We can set this via JS to be safe, or assume it's in CSS
+    // Ensure container is relative for boundary calculations
     container.style.position = 'relative';
 
+    let isFloating = false;
+
     const moveButton = (e) => {
+        // Prevent default click behavior immediately
         if (e.type === 'click' || e.type === 'touchstart') {
             e.preventDefault();
         }
 
-        // Get dimensions
         const containerRect = container.getBoundingClientRect();
         const buttonRect = declineLabel.getBoundingClientRect();
-        
-        // Calculate max allowed positions within the container
-        // padding ensures it doesn't touch the very edge
+
+        // FIRST TIME: Switch to absolute positioning
+        if (!isFloating) {
+            // Create a spacer to hold the layout position
+            const spacer = document.createElement('div');
+            spacer.style.width = `${buttonRect.width}px`;
+            spacer.style.height = `${buttonRect.height}px`;
+            spacer.style.margin = getComputedStyle(declineLabel).margin; // Copy margins if any
+            spacer.style.display = 'inline-block'; // Or block/flex depending on parent
+            
+            // Insert spacer before the button moves
+            declineLabel.parentNode.insertBefore(spacer, declineLabel);
+            
+            // Calculate current position relative to container
+            const currentLeft = buttonRect.left - containerRect.left;
+            const currentTop = buttonRect.top - containerRect.top;
+            
+            // Apply absolute positioning to the button
+            declineLabel.style.position = 'absolute';
+            declineLabel.style.left = `${currentLeft}px`;
+            declineLabel.style.top = `${currentTop}px`;
+            declineLabel.style.width = `${buttonRect.width}px`;
+            declineLabel.style.zIndex = '100';
+            declineLabel.style.margin = '0'; // Remove margin as it's now absolute
+            
+            isFloating = true;
+            
+            // Force browser repaint
+            void declineLabel.offsetWidth;
+            
+            // Enable transition for movement
+            declineLabel.style.transition = 'all 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+        }
+
+        // MOVE: Calculate new random position
         const padding = 20;
         const maxLeft = containerRect.width - buttonRect.width - padding;
         const maxTop = containerRect.height - buttonRect.height - padding;
 
-        // Generate random position within these bounds
         const newLeft = Math.max(padding, Math.random() * maxLeft);
         const newTop = Math.max(padding, Math.random() * maxTop);
 
-        // Apply styles to move it
-        declineLabel.style.position = 'absolute';
         declineLabel.style.left = `${newLeft}px`;
         declineLabel.style.top = `${newTop}px`;
         
-        // Ensure it sits above other form elements
-        declineLabel.style.zIndex = '10';
-        declineLabel.style.transition = 'all 0.3s ease-out';
-        
-        // Optional: Add a fun rotation
-        declineLabel.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
+        // Add fun rotation
+        const randomRotate = (Math.random() * 30) - 15;
+        declineLabel.style.transform = `rotate(${randomRotate}deg)`;
     };
 
     declineLabel.addEventListener('mouseover', moveButton);
