@@ -271,7 +271,8 @@ h1, h2, h3 {
     align-items: center;
     justify-content: center;
     background: linear-gradient(135deg, #0f0f23 0%, #16213e 100%);
-    background-image: url('../images/hero-background.JPG');
+    /* Updated extension from .JPG to .jpg */
+    background-image: url('../images/hero-background.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -434,7 +435,8 @@ h1, h2, h3 {
 /* About Section */
 .about {
     background: linear-gradient(135deg, #0f0f23 0%, #16213e 100%);
-    background-image: url('../images/about-background.jpeg');
+    /* Updated extension from .jpeg to .jpg */
+    background-image: url('../images/about-background.jpg');
     background-size: cover;
     background-position: -20% center;
     background-attachment: fixed;
@@ -558,7 +560,8 @@ section {
 .details {
     background: linear-gradient(135deg, #0f0f23 0%, #16213e 100%);
     /* Add background image option */
-    background-image: url('../images/details-background.jpeg');
+    /* Updated extension from .jpeg to .jpg */
+    background-image: url('../images/details-background.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -667,7 +670,8 @@ section {
 .gallery {
     background: linear-gradient(135deg, #16213e 0%, #0f0f23 100%);
     /* Add same background image as details section */
-    background-image: url('../images/details-background.jpeg');
+    /* Updated extension from .jpeg to .jpg */
+    background-image: url('../images/details-background.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
